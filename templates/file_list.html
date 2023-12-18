@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}Display Files - My App{% endblock %}
+{% block content %}
+<!-- Your specific content for the upload file page goes here -->
+
+<h1>File List</h1>
+<div class="card mt-4">
+    <div class="card-header">
+        <h4 class="card-title text-center">Existing Files on Cloud</h4>
+    </div>
+    <div class="card-body text-center">
+        <div class="table-responsive">
+            <table id="fileTable" class="table table-striped">
+                <thead>
+                    <tr>
+                        <th class="text-center">File Name</th>
+                        <th class="text-center">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for file in files %}
+                    <tr>
+                        <td>{{ file }}</td>
+                        <td>
+                            <a href="{{ url_for('share_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-success btn-sm" onclick="shareFile('{{ file }}')">
+                                <i class="fas fa-share"></i> Share
+                            </a>
+                            <a href="{{ url_for('delete_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-danger btn-sm" onclick="deleteFile('{{ file }}')">
+                                <i class="fas fa-trash"></i> Delete
+                            </a>
+                            <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm" download>
+                                <i class="fas fa-download"></i> Download
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

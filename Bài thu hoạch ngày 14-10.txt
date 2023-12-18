@@ -1,0 +1,32 @@
+NHỮNG CẢN TRỞ ĐỐI VỚI NGƯỜI DÙNG
+- Không có tính nhất quán
+- Quán nhiều thông tin để ghi nhớ
+- Không có hướng dẫn, hỗ trợ
+- Không nhạy cảm với ngữ cảnh
+
+3 QUY TẮC VÀNG TRONG THIẾT KẾ GIAO DIỆN
+- Cho người dùng sự kiểm sóat
+	+ Cho người dùng có quyền tự do tương tác, thực hiện nhiều việc cùng một lúc, chuyển đổi giữa các ứng dụng
+	+ Cung cấp sự tương tác linh hoạt
+	+ Cho phép người dùng được ngắt hoặc hoàn tác
+	+ Hợp lý hóa tương tác và cho phép tùy chỉnh tương tác
+	+ Ẩn kỹ thuật bên trong đối với người sử dụng bình thường
+	+ Cho tương tác trực tiếp đối với các đối tượng xuất hiện trên màn hình
+
+- Tối thiểu hóa việc ghi nhớ của người dùng
+	+ Giảm áp lực lên trí nhớ ngắn hạn
+	+ Thiết lập giá trị mặc định có ý nghĩa
+	+ Xác định các phím tắt dễ hiểu
+	+ Sử dụng hiệu ứng hình ảnh dựa trên thế giới thực
+	+ Tiết lộ thông tin theo cách từ từ
+
+- Thiết kế giao diện nhất quán
+	+ Thế nào là giao diện nhất quán?
+	  - Được sắp xếp thông tin một cách hợp lý
+	  - Giao diện có cách thức nhập dữ liệu được giới hạn vào một tập hợp hạn chế và duy nhất
+	  - Được định nghĩa và triển khai một cách nhất quán các cơ chế để chuyển đổi từ nhiệm vụ này sang nhiệm vụ khác trên giao diện ứng dụng.
+	+ Các nguyên tác thiết kế giao diện nhất quán
+	  - Cho phép người dùng đưa nhiệm vụ hiện tại vào một ý nghĩa ngữ cảnh
+	  - Duy trì tính nhất quán trên một nhóm ứng dụng
+	  - Nếu các mô hình tương tác trong quá khứ đã tạo ra kỳ vọng của người dùng, không thực hiện thay đổi trừ khi có lý do thuyết phục để làm như vậy.
+	

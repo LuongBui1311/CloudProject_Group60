@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Share File - My App{% endblock %}
+
+{% block content %}
+<div class="card mt-4">
+    <div class="card-header">
+        <h4 class="card-title text-center">Share File</h4>
+    </div>
+    <div class="card-body">
+        <div class="form-group">
+            <div class="mb-3">
+                <label for="sharedLink" class="form-label">Shared Link:</label>
+                <textarea class="form-control" id="sharedLink" rows="2" readonly>{{ shared_link }}</textarea>
+            </div>
+        </div>
+        <a href="/files" class="btn btn-primary">Back to File List</a>
+    </div>
+</div>
+{% endblock %}
