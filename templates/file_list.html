@@ -28,7 +28,7 @@
                             <a href="{{ url_for('delete_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-danger btn-sm" onclick="deleteFile('{{ file }}')">
                                 <i class="fas fa-trash"></i> Delete
                             </a>
-                            <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm" download>
+                            <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm">
                                 <i class="fas fa-download"></i> Download
                             </a>
                         </td>
