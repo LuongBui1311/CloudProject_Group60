@@ -40,7 +40,7 @@
                                 <td>01</td>
                                 <td>{{ file }}</td>
                                 <td>
-                                    <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm" download>
+                                    <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm">
                                         <i class="fas fa-download"></i> Download
                                     </a>
                                     <a href="{{ url_for('share_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-success btn-sm" onclick="shareFile('{{ file }}')">
