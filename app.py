@@ -1,11 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, session, make_response
 import boto3
-from botocore.exceptions import NoCredentialsError
+from botocore.client import Config
 import delete
-import download
 import share
 import upload
 import load
+import create_client
 #import mimetypes
 
 app = Flask(__name__, static_folder='static')
@@ -14,11 +14,6 @@ app.secret_key = 'DQ0oU97ZLZyo4Jzd2duUsvgZ76P3SzLYHeWueykN'
 # Constants
 NUM_BYTES_FOR_LEN = 4
 BUCKETNAME = "endsemproject"
-
-# Hàm tạo client S3
-def create_s3_client(access_key, secret_key):
-    return boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
-
 
 # Route cho trang đăng nhập
 @app.route('/', methods=['GET', 'POST'])
@@ -74,7 +69,7 @@ def file_list():
     kms_key_id = session.get('kms_key_id')
 
     # Tạo client S3
-    s3_client = create_s3_client(access_key, secret_key)
+    s3_client = create_client.create_s3_client(access_key, secret_key)
 
     # Đọc danh sách tệp tin từ S3
     files = load.read_all_files_from_s3(BUCKETNAME, s3_client)
@@ -103,7 +98,7 @@ def upload_file():
         # return "abc"
 
         # # Tạo client S3
-        s3_client = create_s3_client(access_key, secret_key)
+        s3_client = create_client.create_s3_client(access_key, secret_key)
         #
         # # Upload file
         if 'file' in request.files:
@@ -136,7 +131,7 @@ def delete_file(file_name):
     kms_key_id = request.args.get('kms_key_id')
 
     # Tạo client S3
-    s3_client = create_s3_client(access_key, secret_key)
+    s3_client = create_client.create_s3_client(access_key, secret_key)
 
     # Xóa file từ S3
     if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
@@ -152,24 +147,15 @@ def download_file(file_name):
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
 
-    # Tạo client S3
-    s3_client = create_s3_client(access_key, secret_key)
-
-    # Tải về file từ S3
-    response = s3_client.get_object(Bucket="your_bucket_name", Key=file_name)
-    file_data = response['Body'].read()
-
-    # Đặt loại MIME phù hợp cho file ảnh (ví dụ: image/png)
-    mime_type = "image/png"  # Thay đổi loại MIME phù hợp với định dạng của file ảnh
-
-    # Tạo phản hồi Flask với dữ liệu tệp và loại MIME
-    flask_response = make_response(file_data)
-    flask_response.headers["Content-Type"] = mime_type
-    flask_response.headers["Content-Disposition"] = f"attachment; filename={file_name}"
-
-    return flask_response
-
-
+    s3_resource = create_client.create_s3_resource(access_key, secret_key)
+    
+    s3_bucket = s3_resource.Bucket(BUCKETNAME)
+    for s3_file in s3_bucket.objects.all():
+        if s3_file.key == file_name:
+            s3_resource.Bucket(BUCKETNAME).download_file(s3_file.key, file_name)
+            
+    return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
+    
 # Route cho thao tác chia sẻ tệp tin
 @app.route('/share/<file_name>')
 def share_file(file_name):
@@ -179,7 +165,7 @@ def share_file(file_name):
     kms_key_id = session.get('kms_key_id')
 
     # Tạo client S3
-    s3_client = create_s3_client(access_key, secret_key)
+    s3_client = create_client.create_s3_client(access_key, secret_key)
 
     # Tạo đường link chia sẻ
     shared_link = share.generate_shared_link(access_key, BUCKETNAME, secret_key, file_name)
