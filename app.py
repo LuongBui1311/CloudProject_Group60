@@ -1,123 +1,23 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, session, make_response
 import boto3
 from botocore.exceptions import NoCredentialsError
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.fernet import Fernet
+import delete
+import download
+import share
+import upload
+import load
 #import mimetypes
 
 app = Flask(__name__, static_folder='static')
-app.secret_key = 'DQ0oU97ZLZyo4Jzd2duUsvgZ76P3SzLYHeWueykN'  # Replace 'your_secret_key' with a secure and unique key
+app.secret_key = 'DQ0oU97ZLZyo4Jzd2duUsvgZ76P3SzLYHeWueykN' 
 
 # Constants
 NUM_BYTES_FOR_LEN = 4
 BUCKETNAME = "endsemproject"
 
-
 # Hàm tạo client S3
 def create_s3_client(access_key, secret_key):
     return boto3.client('s3', aws_access_key_id=access_key, aws_secret_access_key=secret_key)
-
-
-# Hàm mã hóa (encryption) sử dụng AWS KMS
-def encrypt_file_with_kms(data, kms_key_id):
-    kms_client = boto3.client('kms')
-
-    response = kms_client.encrypt(
-        KeyId=kms_key_id,
-        Plaintext=data
-    )
-
-    return response['CiphertextBlob']
-
-
-# Hàm giải mã (decryption) sử dụng AWS KMS
-def decrypt_file_with_kms(encrypted_data, kms_key_id):
-    kms_client = boto3.client('kms')
-
-    response = kms_client.decrypt(
-        KeyId=kms_key_id,
-        CiphertextBlob=encrypted_data
-    )
-
-    return response['Plaintext']
-
-
-# Hàm tải file từ S3 với giải mã
-def download_decrypted_file_from_s3_with_kms(file_name, bucket_name, s3_client, kms_key_id):
-    try:
-        # Download the encrypted file content from S3
-        response = s3_client.get_object(Bucket=bucket_name, Key=file_name)
-        encrypted_data = response['Body'].read()
-
-        # Decrypt the file content
-        decrypted_data = decrypt_file_with_kms(encrypted_data, kms_key_id)
-
-        return decrypted_data
-    except NoCredentialsError:
-        return None
-    except Exception as e:
-        return None
-
-
-# Hàm tải tất cả các files từ S3
-def read_all_files_from_s3(bucket_name, s3_client):
-    try:
-        objects = s3_client.list_objects(Bucket=bucket_name)['Contents']
-        return [obj['Key'] for obj in objects]
-    except NoCredentialsError:
-        return []
-    except Exception as e:
-        return []
-
-
-# Hàm upload file lên S3 với mã hóa SSE-KMS
-def upload_encrypted_file_to_s3_with_kms(file_path, bucket_name, s3_client, kms_key_id):
-    try:
-        print(bucket_name, kms_key_id)
-        with open(file_path, 'r') as file:
-            file_contents = file.read()
-            
-            # Determine the MIME type of the file
-            #mime_type, _ = mimetypes.guess_type(file_path)
-
-        encrypted_data = encrypt_file_with_kms(file_contents, kms_key_id)
-
-        if encrypted_data is not None:
-            s3_client.put_object(Body=encrypted_data, Bucket=bucket_name, Key=file_path)
-            return True
-        else:
-            return False
-    except NoCredentialsError:
-        return False
-    except Exception as e:
-        return False
-
-
-# Hàm xóa file từ S3
-def delete_file_from_s3(file_name, bucket_name, s3_client):
-    try:
-        s3_client.delete_object(Bucket=bucket_name, Key=file_name)
-        return True
-    except NoCredentialsError:
-        return False
-    except Exception as e:
-        return False
-
-
-# Hàm tạo đường link chia sẻ
-def generate_shared_link(file_name, bucket_name, s3_client):
-    try:
-        # Generate a pre-signed URL with expiration time (e.g., valid for 1 hour)
-        expiration_time = 3600  # 1 hour in seconds
-        shared_link = s3_client.generate_presigned_url(
-            'get_object',
-            Params={'Bucket': bucket_name, 'Key': file_name},
-            ExpiresIn=expiration_time
-        )
-
-        return shared_link
-    except Exception as e:
-        return None
 
 
 # Route cho trang đăng nhập
@@ -177,7 +77,7 @@ def file_list():
     s3_client = create_s3_client(access_key, secret_key)
 
     # Đọc danh sách tệp tin từ S3
-    files = read_all_files_from_s3(BUCKETNAME, s3_client)
+    files = load.read_all_files_from_s3(BUCKETNAME, s3_client)
 
     # Hiển thị danh sách tệp tin
     return render_template('file_list.html', files=files,
@@ -213,7 +113,7 @@ def upload_file():
                 file_path = f"{file.filename}"
                 file.save(file_path)
 
-                if upload_encrypted_file_to_s3_with_kms(file_path, BUCKETNAME, s3_client, kms_key_id):
+                if upload.upload_encrypted_file_to_s3_with_kms(file_path, BUCKETNAME, s3_client, kms_key_id):
                     return redirect(url_for('file_list'))
                 else:
                     return "Lỗi khi upload file"
@@ -239,7 +139,7 @@ def delete_file(file_name):
     s3_client = create_s3_client(access_key, secret_key)
 
     # Xóa file từ S3
-    if delete_file_from_s3(file_name, BUCKETNAME, s3_client):
+    if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
         return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
     else:
         return "Lỗi khi xóa file"
@@ -282,7 +182,7 @@ def share_file(file_name):
     s3_client = create_s3_client(access_key, secret_key)
 
     # Tạo đường link chia sẻ
-    shared_link = generate_shared_link(file_name, BUCKETNAME, s3_client)
+    shared_link = share.generate_shared_link(access_key, BUCKETNAME, secret_key, file_name)
 
     if shared_link:
         return render_template('share_file.html', shared_link=shared_link)
