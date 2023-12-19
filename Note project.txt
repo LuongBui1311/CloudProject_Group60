@@ -1,1 +1,0 @@
-- Mỗi thành viên 2 yêu cầu chức năng và 1 yêu cầu phi chức năng 
