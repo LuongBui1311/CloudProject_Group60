@@ -60,21 +60,5 @@
     </div>
 </div>
 
-<script>
-   var Upload_time = '{{ upload_time }}';
-
-function uploadtime() {
-    // Kiểm tra xem upload_time có giá trị không rỗng
-    if (Upload_time !== '' && Upload_time !== 'null' && Upload_time !== null) {
-        // Hiển thị thông báo với giá trị upload_time
-        alert('Upload file: ' + Upload_time);
-    } else {
-        alert('Upload time is not available.');
-    }
-}
-// Gọi hàm uploadtime()
-uploadtime();
-</script>
-
 
 {% endblock %}
