@@ -1,4 +1,3 @@
-<!-- base.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}My App{% endblock %}</title>
-    <!--FONTAWESOME-->
     <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" rel="stylesheet"
           type="text/css"/>
 
-    <!-- Libs CSS -->
     <script src="{{ url_for('static', filename='assets/js/vendors/darkMode.js') }}"></script>
     <link href="{{ url_for('static', filename='assets/fonts/feather/feather.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/libs/bootstrap-icons/font/bootstrap-icons.min.css') }}" rel="stylesheet" />
@@ -23,145 +20,138 @@
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body style="overflow-x: hidden;">
-<!--Header-->
-
-<nav class="navbar navbar-expand-lg">
-    <div class="container-fluid px-0">
-        <div class="d-flex">
-            <a class="navbar-brand" href="/files" style="
-            font-weight: 900;
-            font-family: fantasy;
-            font-size: 20px; ">NHÓM 60</a>
-            
-        </div>
-        <div class="order-lg-3">
-            <div class="d-flex align-items-center">
-                <div class="dropdown">
-                    <button class="btn btn-light btn-icon rounded-circle d-flex align-items-center" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
-                        <i class="bi theme-icon-active"></i>
-                        <span class="visually-hidden bs-theme-text">Toggle theme</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
-                        <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
-                                <i class="bi theme-icon bi-sun-fill"></i>
-                                <span class="ms-2">Light</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
-                                <i class="bi theme-icon bi-moon-stars-fill"></i>
-                                <span class="ms-2">Dark</span>
-                            </button>
-                        </li>
-                        <li>
-                            <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
-                                <i class="bi theme-icon bi-circle-half"></i>
-                                <span class="ms-2">Auto</span>
-                            </button>
-                        </li>
-                    </ul>
-                </div>
-                <a href="{{ url_for('logout', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" 
-                    class="btn btn-outline-primary ms-2 d-none d-lg-block">Sign out</a>
-                <!-- Button -->
-                <button
-                    class="navbar-toggler collapsed ms-2 ms-lg-0"
-                    type="button"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#navbar-default"
-                    aria-controls="navbar-default"
-                    aria-expanded="false"
-                    aria-label="Toggle navigation">
-                    <span class="icon-bar top-bar mt-0"></span>
-                    <span class="icon-bar middle-bar"></span>
-                    <span class="icon-bar bottom-bar"></span>
-                </button>
-            </div>
-        </div>
-
-        <!-- Collapse -->
-        <div class="collapse navbar-collapse" id="navbar-default">
-            <ul class="navbar-nav mx-auto">
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid px-0">
+            <div class="d-flex">
+                <a class="navbar-brand" href="/files" style="
+                font-weight: 900;
+                font-family: fantasy;
+                font-size: 20px; ">NHÓM 60</a>
                 
-                <p class="m-0">Hello, Admin</p>
-            </ul>
-        </div>
-    </div>
-</nav>
-<div class="container-fluid">
-    <div class="row flex-nowrap">
-        <div class="col mx-4" id="content">
-            {% block content %}{% endblock %}
-        </div>
-    </div>
-</div>
-
-
-<!-- footer -->
-<footer class="pt-5 pb-3">
-    <div class="container">
-        <div class="row  justify-content-center text-center  align-items-center ">
-
-            <div class="col-12 col-md-12 col-xxl-12 px-0 ">
-                <div class="mb-4">
-                    <div class="d-flex justify-content-center mb-2">
-                        <a class="navbar-brand" href="/files" style="
-                        font-weight: 900;
-                        font-family: fantasy;
-                        font-size: 20px; ">NHÓM 60</a>
+            </div>
+            <div class="order-lg-3">
+                <div class="d-flex align-items-center">
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-icon rounded-circle d-flex align-items-center" type="button" aria-expanded="false" data-bs-toggle="dropdown" aria-label="Toggle theme (auto)">
+                            <i class="bi theme-icon-active"></i>
+                            <span class="visually-hidden bs-theme-text">Toggle theme</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="bs-theme-text">
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="light" aria-pressed="false">
+                                    <i class="bi theme-icon bi-sun-fill"></i>
+                                    <span class="ms-2">Light</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center" data-bs-theme-value="dark" aria-pressed="false">
+                                    <i class="bi theme-icon bi-moon-stars-fill"></i>
+                                    <span class="ms-2">Dark</span>
+                                </button>
+                            </li>
+                            <li>
+                                <button type="button" class="dropdown-item d-flex align-items-center active" data-bs-theme-value="auto" aria-pressed="true">
+                                    <i class="bi theme-icon bi-circle-half"></i>
+                                    <span class="ms-2">Auto</span>
+                                </button>
+                            </li>
+                        </ul>
                     </div>
-                    <p class="lead fw-bold fs-2 m-0">CLOUD COMPUTING</p>
-                    <p class="lead">(CLCO332779_07UTExMC)</p>
+                    <a href="{{ url_for('logout', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" 
+                        class="btn btn-outline-primary ms-2 d-none d-lg-block">Sign out</a>
+                    <button
+                        class="navbar-toggler collapsed ms-2 ms-lg-0"
+                        type="button"
+                        data-bs-toggle="collapse"
+                        data-bs-target="#navbar-default"
+                        aria-controls="navbar-default"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                        <span class="icon-bar top-bar mt-0"></span>
+                        <span class="icon-bar middle-bar"></span>
+                        <span class="icon-bar bottom-bar"></span>
+                    </button>
                 </div>
-                <p class="lead text-center fw-bolder">Members:</p>
-                <nav class="nav nav-footer justify-content-center align-items-center">
-                    <span class="mx-3" href="#">Bùi Thị Xuân Lương - 21142316</span>
-                    <span class="my-2 vr opacity-50"></span>
-                    <span class="mx-3" href="#">Trịnh Ngọc Thương - 21110673</span>
-                    <span class="my-2 vr opacity-50"></span>
-                    <span class="mx-3" href="#">Nguyễn Tấn Lâm - 21110895</span>
-                </nav>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-default">
+                <ul class="navbar-nav mx-auto">
+                    
+                    <p class="m-0">Hello, Admin</p>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <div class="col mx-4" id="content">
+                {% block content %}{% endblock %}
             </div>
         </div>
     </div>
-</footer>
 
-<!-- <script src="https://code.jquery.com/jquery-3.7.0.js"></scrip> -->
-<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
-        integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
-        crossorigin="anonymous"></script>
+    <footer class="pt-5 pb-3">
+        <div class="container">
+            <div class="row  justify-content-center text-center  align-items-center ">
 
-<script>
-    var alertElement = document.getElementById("alert-action-success");
-    var messSuccess = "{{ mess }}";
-    var messError = "{{ error }}";
-    var time = "{{ time }}"
-    var mess;
+                <div class="col-12 col-md-12 col-xxl-12 px-0 ">
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-center mb-2">
+                            <a class="navbar-brand" href="/files" style="
+                            font-weight: 900;
+                            font-family: fantasy;
+                            font-size: 20px; ">NHÓM 60</a>
+                        </div>
+                        <p class="lead fw-bold fs-2 m-0">CLOUD COMPUTING</p>
+                        <p class="lead">(CLCO332779_07UTExMC)</p>
+                    </div>
+                    <p class="lead text-center fw-bolder">Members:</p>
+                    <nav class="nav nav-footer justify-content-center align-items-center">
+                        <span class="mx-3" href="#">Bùi Thị Xuân Lương - 21142316</span>
+                        <span class="my-2 vr opacity-50"></span>
+                        <span class="mx-3" href="#">Trịnh Ngọc Thương - 21110673</span>
+                        <span class="my-2 vr opacity-50"></span>
+                        <span class="mx-3" href="#">Nguyễn Tấn Lâm - 21110895</span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </footer>
 
-    if(messSuccess.length !== 0 && messSuccess !== "None") 
-    {
-        mess = messSuccess;
-        showTextAlert(mess + " (" +String(time)+"s)");
-    } else if(messError.length !== 0 && messError !== "None"){
-        mess = messError;
-        showTextAlert(mess + " (" +String(time)+"s)");
-    }
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+            integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
+            integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
+            crossorigin="anonymous"></script>
+    <script>
+        var alertElement = document.getElementById("alert-action-success");
+        var messSuccess = "{{ mess }}";
+        var messError = "{{ error }}";
+        var time = "{{ time }}"
+        var mess;
 
-    function showTextAlert(message = "") {
-        alertElement.textContent = message;
-            alertElement.classList.add("show-alert");
-            setTimeout(function() {
-                alertElement.classList.remove("show-alert");
-                alertElement.classList.add("alert-action");
-            }, 3000);
-    }
-</script>
+        if(messSuccess.length !== 0 && messSuccess !== "None") 
+        {
+            mess = messSuccess;
+            showTextAlert(mess + " (" +String(time)+"s)");
+        } else if(messError.length !== 0 && messError !== "None"){
+            mess = messError;
+            showTextAlert(mess + " (" +String(time)+"s)");
+        }
+
+        function showTextAlert(message = "") {
+            alertElement.textContent = message;
+                alertElement.classList.add("show-alert");
+                setTimeout(function() {
+                    alertElement.classList.remove("show-alert");
+                    alertElement.classList.add("alert-action");
+                }, 3000);
+        }
+    </script>
 
     <script src="{{ url_for('static', filename='assets/js/vendors/jquery.min.js')}}"></script>
     <script src="{{ url_for('static', filename='assets/libs/datatables.net/js/jquery.dataTables.min.js')}}"></script>

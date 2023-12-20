@@ -20,8 +20,6 @@ def generate_shared_link(aws_access_key_id, bucket_name, aws_secret_access_key,f
         )
         end_time = time.time()
         share_time = end_time - start_time
-
-        print(f"Thời gian chia sẻ: {share_time} giây")
         return url
     except NoCredentialsError:
         return None

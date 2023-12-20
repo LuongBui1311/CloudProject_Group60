@@ -31,7 +31,6 @@ def login():
 
     return render_template('login.html')
 
-
 @app.route('/logout')
 def logout():
     access_key = session.get('access_key')
@@ -54,13 +53,10 @@ def file_list():
     error = request.args.get("error")
     time = request.args.get("time")
 
-    # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
 
-    # Đọc danh sách tệp tin từ S3
     files = load.read_all_files_from_s3(BUCKETNAME, s3_client)
 
-    # Hiển thị danh sách tệp tin
     return render_template('file_list.html', files=files,
                            access_key=access_key, secret_key=secret_key, 
                            kms_key_id=kms_key_id, s3_client=s3_client, 
@@ -71,19 +67,15 @@ def file_list():
 @app.route('/files/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
-        # khởi tạo thời gian đầu
         start_time = time.time()
 
-        # # Retrieve data from the session
         access_key = session.get('access_key')
         secret_key = session.get('secret_key')
         kms_key_id = session.get('kms_key_id')
         mess = "";
         error = "";
-        # # Tạo client S3
         s3_client = create_client.create_s3_client(access_key, secret_key)
-        #
-        # # Upload file
+
         if 'file' in request.files:
             file = request.files['file']
             if file.filename != '':
@@ -92,11 +84,8 @@ def upload_file():
                 file.save(file_path)
                 if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
                     mess = "Upload thành công !"
-                    # Khởi tạo thời gian kết thúc
                     end_time = time.time()
-                    # tính thời gian bằng cách trừ tg đầu và tg kết
                     upload_time = end_time - start_time
-                    # chuyển thời gian tính qua html
                     return redirect(url_for('file_list', time=upload_time ,mess = mess, error = error))
                 else:
                     return "Lỗi khi upload file"
@@ -115,10 +104,9 @@ def delete_file(file_name):
     kms_key_id = request.args.get('kms_key_id')
     mess = "";
     error = "";
-    # Tạo client S3
+
     s3_client = create_client.create_s3_client(access_key, secret_key)
 
-    # Xóa file từ S3
     try:
         if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
             mess = "Xóa thành công!";
@@ -136,9 +124,7 @@ def delete_file(file_name):
 
 @app.route('/download/<file_name>')
 def download_file(file_name):
-    # khai báo thời gian thực ban đầu
     start_time = time.time()
-    # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
@@ -165,7 +151,6 @@ def download_file(file_name):
 @app.route('/share/<file_name>')
 def share_file(file_name):
     start_time = time.time()
-    # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = session.get('access_key')
     secret_key = session.get('secret_key')
     kms_key_id = session.get('kms_key_id')
@@ -173,10 +158,8 @@ def share_file(file_name):
     error = ""
     mytime = time.time()
 
-    # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
 
-    # Tạo đường link chia sẻ
     shared_link = share.generate_shared_link(access_key, BUCKETNAME, secret_key, file_name)
 
     if shared_link:

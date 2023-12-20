@@ -15,10 +15,6 @@ import create_client
 def upload_file_to_s3(file_path, bucket_name, s3_client, kms_key_id):
     try:
         start_time = time.time()
-
-        # Mở tập tin đường dẫn file_path để đọc nội dung
-        # rb: Đọc dạng nhị phân (đọc hình ảnh, video, docx)
-        # file_content: Biến chứa nội dung sau khi đọc
         with open(file_path, 'rb') as file:
             file_contents = file.read()
         # Khóa đối tượng object_key
@@ -30,7 +26,6 @@ def upload_file_to_s3(file_path, bucket_name, s3_client, kms_key_id):
         upload_time = end_time - start_time
         print(f"Thời gian tải lên: {upload_time} giây")
         return render_template('file_list.html', upload_time=upload_time)
-    # ngoại lệ
     except NoCredentialsError:
         return False
     except Exception as e:

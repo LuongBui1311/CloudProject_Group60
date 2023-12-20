@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
-    <!--FONTAWESOME-->
     <link href="https://cdn.jsdelivr.net/gh/hung1001/font-awesome-pro@4cac1a6/css/all.css" rel="stylesheet"
           type="text/css"/>
-    <!-- Libs CSS -->
     <link href="{{ url_for('static', filename='assets/fonts/feather/feather.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/libs/bootstrap-icons/font/bootstrap-icons.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/libs/simplebar/dist/simplebar.min.css') }}" rel="stylesheet" />
@@ -24,21 +22,17 @@
                 <div class="col-lg-5 col-md-8 py-8 py-xl-0">
                     <!-- Card -->
                     <div class="card shadow">
-                        <!-- Card body -->
                         <div class="card-body p-6">
                             <div class="mb-4">
                                 <h1 class="mb-1 fw-bold">Sign in</h1>
                                
                             </div>
-                            <!-- Form -->
                             <form action="/" method="post" class="needs-validation" novalidate>
-                                <!-- Username -->
                                 <div class="mb-3">
                                     <label for="access_key" class="form-label text-uppercase">Access key</label>
                                     <input type="text" id="access_key" class="form-control" name="access_key" placeholder="Access key here" required>
                                     <div class="invalid-feedback">Please enter valid key.</div>
                                 </div>
-                                <!-- Password -->
                                 <div class="mb-3">
                                     <label for="secret_key" class="form-label text-uppercase">Secret key</label>
                                     <input type="password" id="secret_key" class="form-control" name="secret_key" placeholder="**************" required>
@@ -49,12 +43,10 @@
                                     <input type="password" id="kms_key_id" class="form-control" name="kms_key_id" placeholder="**************" required>
                                     <div class="invalid-feedback">Please enter valid key.</div>
                                 </div>
-                                <!-- Checkbox -->
                                 <div class="d-lg-flex justify-content-between align-items-center mb-4">
                                    
                                 </div>
                                 <div>
-                                    <!-- Button -->
                                     <div class="d-grid">
                                         <button type="submit" class="btn btn-primary">Sign in</button>
                                     </div>
