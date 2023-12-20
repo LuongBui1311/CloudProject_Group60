@@ -98,14 +98,13 @@ def upload_file():
                 file_path = f"{file.filename}"
                 file.save(file_path)
                 if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
-                    mess = "Finished !"
+                    mess = "Upload thành công !"
                     # Khởi tạo thời gian kết thúc
                     end_time = time.time()
                     # tính thời gian bằng cách trừ tg đầu và tg kết
                     upload_time = end_time - start_time
-                    print(f"Thời gian tải lên: {upload_time} giây")
                     # chuyển thời gian tính qua html
-                    return redirect(url_for('file_list',upload_time=upload_time ))
+                    return redirect(url_for('file_list',upload_time=upload_time ,mess = mess, error = error))
                 else:
                     return "Lỗi khi upload file"
 
@@ -118,7 +117,6 @@ def upload_file():
 def delete_file(file_name):
 
     start_time = time.time()
-    # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
@@ -130,26 +128,17 @@ def delete_file(file_name):
     # Xóa file từ S3
     try:
         if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
-            print("Mess success");
-            mess = "Finished!";
+            mess = "Xóa thành công!";
+            end_time = time.time()
+            delete_time = end_time - start_time
         else:
-            error = "Fail !"
+            error = "Xóa thất bại !"
     except Exception as e:
         error = e
         
-    
-    
-    return redirect(url_for('file_list', access_key=access_key, 
+    return redirect(url_for('file_list', access_key=access_key, delete_time=delete_time,
                                 secret_key=secret_key, kms_key_id=kms_key_id, 
                                 mess = mess, error=error))
-    if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
-        end_time = time.time()
-        delete_time = end_time - start_time
-
-        print(f"Thời gian xóa: {delete_time} giây")
-        return redirect(url_for('file_list',delete_time=delete_time, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
-    else:
-        return "Lỗi khi xóa file"
 
 
 @app.route('/download/<file_name>')
@@ -169,23 +158,14 @@ def download_file(file_name):
         for s3_file in s3_bucket.objects.all():
             if s3_file.key == file_name:
                 s3_resource.Bucket(BUCKETNAME).download_file(s3_file.key, file_name)
-        mess = "Finished !"
+                end_time = time.time()
+                download_time = end_time - start_time
+                mess = "Tải về thành công !"
     except Exception as e:
-        error = "Fail !"
+        error = "Tải về thất bại!"
 
-    
-    s3_bucket = s3_resource.Bucket(BUCKETNAME)
-    for s3_file in s3_bucket.objects.all():
-        if s3_file.key == file_name:
-            s3_resource.Bucket(BUCKETNAME).download_file(s3_file.key, file_name)
-            # Thời gian kết thúc tải file
-            end_time = time.time()
-            download_time = end_time - start_time
-
-            print(f"Thời gian tải về: {download_time} giây")
-    return redirect(url_for('file_list',download_time=download_time, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
-            
-    return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id,
+    return redirect(url_for('file_list',download_time=download_time, 
+                            access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id,
                             mess = mess, error = error))
     
 # Route cho thao tác chia sẻ tệp tin
@@ -206,12 +186,9 @@ def share_file(file_name):
     if shared_link:
         end_time = time.time()
         share_time = end_time - start_time
-
-        print(f"Thời gian chia sẻ: {share_time} giây")
         return render_template('share_file.html', shared_link=shared_link, share_time=share_time)
     else:
         return "Lỗi khi tạo đường link chia sẻ"
-
 
 if __name__ == '__main__':
     app.run(debug=False)
