@@ -35,20 +35,3 @@ def upload_file_to_s3(file_path, bucket_name, s3_client, kms_key_id):
         return False
     except Exception as e:
         return False
-    # try:
-    #     with open(file_path, 'rb') as file:
-    #         file_contents = file.read()
-    #         # Determine the MIME type of the file
-    #         # mime_type, _ = mimetypes.guess_type(file_path)
-    #     object_key = os.path.basename(file_path)
-    #     #encrypted_data = encrypt.encrypt_file_with_kms(file_contents, kms_key_id, file_path)
-    #     #encrypted_data = encrypt.encrypt_large_file_with_kms(file_contents, kms_key_id, file_path)
-    #     if encrypted_data is not None:
-    #         s3_client.put_object(Body=encrypted_data, Bucket=bucket_name, Key=object_key)
-    #         return True
-    #     else:
-    #         return False
-    # except NoCredentialsError:
-    #     return False
-    # except Exception as e:
-    #     return False

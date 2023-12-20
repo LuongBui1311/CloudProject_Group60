@@ -7,7 +7,6 @@ import upload
 import time
 import load
 import create_client
-#import mimetypes
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'DQ0oU97ZLZyo4Jzd2duUsvgZ76P3SzLYHeWueykN' 
@@ -24,14 +23,11 @@ def login():
         secret_key = request.form['secret_key']
         kms_key_id = request.form['kms_key_id']
 
-        # # Store data in the session
+        # Store data in the session
         session['access_key'] = access_key
         session['secret_key'] = secret_key
         session['kms_key_id'] = kms_key_id
-
         return redirect(url_for('file_list'))
-        # return f"<h1>{access_key}</h1>"
-        # return redirect(url_for('/files/abc'))
 
     return render_template('login.html')
 
@@ -46,28 +42,24 @@ def abc():
 
 @app.route('/logout')
 def logout():
-    # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = session.get('access_key')
     secret_key = session.get('secret_key')
     kms_key_id = session.get('kms_key_id')
 
-    # For example, you might want to clear the stored access_key, secret_key, and kms_key_id
-    # Instead of using session.clear(), you can clear specific session variables
     session.pop('access_key', None)
     session.pop('secret_key', None)
     session.pop('kms_key_id', None)
 
-    # Redirect the user back to the login page
     return redirect(url_for('login'))
 
 
-# Route cho trang hiển thị danh sách tệp tin
 @app.route('/files', methods=['GET', 'POST'])
 def file_list():
-    # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = session.get('access_key')
     secret_key = session.get('secret_key')
     kms_key_id = session.get('kms_key_id')
+    mess = request.args.get("mess")
+    error = request.args.get("error")
 
     # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
@@ -77,11 +69,9 @@ def file_list():
 
     # Hiển thị danh sách tệp tin
     return render_template('file_list.html', files=files,
-                           access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id, s3_client=s3_client)
-    # if 'access_key' in session:
-    #     access_key = session['access_key']
-    #     return f"<h1>{access_key}</h1>"
-    # return "abc"
+                           access_key=access_key, secret_key=secret_key, 
+                           kms_key_id=kms_key_id, s3_client=s3_client, 
+                           mess = mess, error = error)
 
 
 # Route cho thao tác upload tệp tin
@@ -95,12 +85,8 @@ def upload_file():
         access_key = session.get('access_key')
         secret_key = session.get('secret_key')
         kms_key_id = session.get('kms_key_id')
-
-        # if 'access_key' in session:
-        #     access_key = session['access_key']
-        #     return f"<h1>{access_key}</h1>"
-        # return "abc"
-
+        mess = "";
+        error = "";
         # # Tạo client S3
         s3_client = create_client.create_s3_client(access_key, secret_key)
         #
@@ -112,6 +98,7 @@ def upload_file():
                 file_path = f"{file.filename}"
                 file.save(file_path)
                 if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
+                    mess = "Finished !"
                     # Khởi tạo thời gian kết thúc
                     end_time = time.time()
                     # tính thời gian bằng cách trừ tg đầu và tg kết
@@ -125,10 +112,6 @@ def upload_file():
         return "Không có file được chọn"
 
     return render_template('upload_file.html')
-    # if 'access_key' in session:
-    #     access_key = session['access_key']
-    #     return f"<h1>{access_key}</h1>"
-    # return "abc"
 
 # Route cho thao tác xóa tệp tin
 @app.route('/delete/<file_name>')
@@ -139,11 +122,26 @@ def delete_file(file_name):
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
-
+    mess = "";
+    error = "";
     # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
 
     # Xóa file từ S3
+    try:
+        if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
+            print("Mess success");
+            mess = "Finished!";
+        else:
+            error = "Fail !"
+    except Exception as e:
+        error = e
+        
+    
+    
+    return redirect(url_for('file_list', access_key=access_key, 
+                                secret_key=secret_key, kms_key_id=kms_key_id, 
+                                mess = mess, error=error))
     if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
         end_time = time.time()
         delete_time = end_time - start_time
@@ -162,8 +160,19 @@ def download_file(file_name):
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
+    mess = "";
+    error = "";
+    try:
+        s3_resource = create_client.create_s3_resource(access_key, secret_key)
+        
+        s3_bucket = s3_resource.Bucket(BUCKETNAME)
+        for s3_file in s3_bucket.objects.all():
+            if s3_file.key == file_name:
+                s3_resource.Bucket(BUCKETNAME).download_file(s3_file.key, file_name)
+        mess = "Finished !"
+    except Exception as e:
+        error = "Fail !"
 
-    s3_resource = create_client.create_s3_resource(access_key, secret_key)
     
     s3_bucket = s3_resource.Bucket(BUCKETNAME)
     for s3_file in s3_bucket.objects.all():
@@ -175,6 +184,9 @@ def download_file(file_name):
 
             print(f"Thời gian tải về: {download_time} giây")
     return redirect(url_for('file_list',download_time=download_time, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
+            
+    return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id,
+                            mess = mess, error = error))
     
 # Route cho thao tác chia sẻ tệp tin
 @app.route('/share/<file_name>')

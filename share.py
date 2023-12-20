@@ -13,7 +13,6 @@ def generate_shared_link(aws_access_key_id, bucket_name, aws_secret_access_key,f
             aws_secret_access_key=aws_secret_access_key,
             config=Config(signature_version='s3v4')  
         )
-
         url = s3.generate_presigned_url(
             ClientMethod='get_object',
             Params={'Bucket': bucket_name, 'Key': filename},
@@ -25,5 +24,4 @@ def generate_shared_link(aws_access_key_id, bucket_name, aws_secret_access_key,f
         print(f"Thời gian chia sẻ: {share_time} giây")
         return url
     except NoCredentialsError:
-        print("Thông tin đăng nhập không khả dụng")
         return None
