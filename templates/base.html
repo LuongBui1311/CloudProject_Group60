@@ -16,8 +16,11 @@
     <link href="{{ url_for('static', filename='assets/libs/bootstrap-icons/font/bootstrap-icons.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/libs/simplebar/dist/simplebar.min.css') }}" rel="stylesheet" />
     <link href="{{ url_for('static', filename='assets/css/theme.min.css') }}" rel="stylesheet" />
-
     <link href="{{ url_for('static', filename='css/login.css') }}" rel="stylesheet" />
+    <link href="{{ url_for('static', filename='css/alert.css') }}" rel="stylesheet" />
+
+    <script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 </head>
 <body style="overflow-x: hidden;">
 <!--Header-->
@@ -121,15 +124,10 @@
                 </nav>
             </div>
         </div>
-
-        <!-- Links -->
-
-
     </div>
 </footer>
-                                              
 
-<script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.7.0.js"></scrip> -->
 <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
@@ -138,23 +136,30 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"
         integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+"
         crossorigin="anonymous"></script>
-<!-- <script src="{{ url_for('static', filename='js/index.js') }}"></script> -->
 
 <script>
-    function downloadFile(fileName) {
-        // Implement your download logic using fileName
-        alert('Downloading file: ' + fileName);
-        
+    var alertElement = document.getElementById("alert-action-success");
+    var messSuccess = "{{ mess }}";
+    var messError = "{{ error }}";
+    var time = "{{ time }}"
+    var mess;
+
+    if(messSuccess.length !== 0 && messSuccess !== "None") 
+    {
+        mess = messSuccess;
+        showTextAlert(mess + " (" +String(time)+"s)");
+    } else if(messError.length !== 0 && messError !== "None"){
+        mess = messError;
+        showTextAlert(mess + " (" +String(time)+"s)");
     }
 
-    function shareFile(fileName) {
-        // Implement your share logic using fileName
-        alert('Sharing file: ' + fileName);
-    }
-
-    function deleteFile(fileName) {
-        // Implement your delete logic using fileName
-        alert('Deleting file: ' + fileName);
+    function showTextAlert(message = "") {
+        alertElement.textContent = message;
+            alertElement.classList.add("show-alert");
+            setTimeout(function() {
+                alertElement.classList.remove("show-alert");
+                alertElement.classList.add("alert-action");
+            }, 3000);
     }
 </script>
 
