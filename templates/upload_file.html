@@ -25,4 +25,18 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Đặt giá trị upload_time từ Jinja2 template
+    var upload_time = '{{ upload_time }}';
+
+    function uploadtime() {
+        // Hiển thị thông báo với giá trị upload_time
+        alert('Upload file: ' + upload_time);
+    }
+
+    // Gọi hàm uploadtime()
+    uploadtime();
+</script>
+
 {% endblock %}

@@ -4,6 +4,7 @@ from botocore.client import Config
 import delete
 import share
 import upload
+import time
 import load
 import create_client
 #import mimetypes
@@ -87,6 +88,9 @@ def file_list():
 @app.route('/files/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
+        # khởi tạo thời gian đầu
+        start_time = time.time()
+
         # # Retrieve data from the session
         access_key = session.get('access_key')
         secret_key = session.get('secret_key')
@@ -108,7 +112,13 @@ def upload_file():
                 file_path = f"{file.filename}"
                 file.save(file_path)
                 if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
-                    return redirect(url_for('file_list'))
+                    # Khởi tạo thời gian kết thúc
+                    end_time = time.time()
+                    # tính thời gian bằng cách trừ tg đầu và tg kết
+                    upload_time = end_time - start_time
+                    print(f"Thời gian tải lên: {upload_time} giây")
+                    # chuyển thời gian tính qua html
+                    return redirect(url_for('file_list',upload_time=upload_time ))
                 else:
                     return "Lỗi khi upload file"
 
@@ -123,6 +133,8 @@ def upload_file():
 # Route cho thao tác xóa tệp tin
 @app.route('/delete/<file_name>')
 def delete_file(file_name):
+
+    start_time = time.time()
     # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
@@ -133,13 +145,19 @@ def delete_file(file_name):
 
     # Xóa file từ S3
     if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
-        return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
+        end_time = time.time()
+        delete_time = end_time - start_time
+
+        print(f"Thời gian xóa: {delete_time} giây")
+        return redirect(url_for('file_list',delete_time=delete_time, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
     else:
         return "Lỗi khi xóa file"
 
 
 @app.route('/download/<file_name>')
 def download_file(file_name):
+    # khai báo thời gian thực ban đầu
+    start_time = time.time()
     # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
@@ -151,12 +169,17 @@ def download_file(file_name):
     for s3_file in s3_bucket.objects.all():
         if s3_file.key == file_name:
             s3_resource.Bucket(BUCKETNAME).download_file(s3_file.key, file_name)
-            
-    return redirect(url_for('file_list', access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
+            # Thời gian kết thúc tải file
+            end_time = time.time()
+            download_time = end_time - start_time
+
+            print(f"Thời gian tải về: {download_time} giây")
+    return redirect(url_for('file_list',download_time=download_time, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id))
     
 # Route cho thao tác chia sẻ tệp tin
 @app.route('/share/<file_name>')
 def share_file(file_name):
+    start_time = time.time()
     # Nhận access_key, secret_key, kms_key_id từ form đăng nhập
     access_key = session.get('access_key')
     secret_key = session.get('secret_key')
@@ -169,7 +192,11 @@ def share_file(file_name):
     shared_link = share.generate_shared_link(access_key, BUCKETNAME, secret_key, file_name)
 
     if shared_link:
-        return render_template('share_file.html', shared_link=shared_link)
+        end_time = time.time()
+        share_time = end_time - start_time
+
+        print(f"Thời gian chia sẻ: {share_time} giây")
+        return render_template('share_file.html', shared_link=shared_link, share_time=share_time)
     else:
         return "Lỗi khi tạo đường link chia sẻ"
 
