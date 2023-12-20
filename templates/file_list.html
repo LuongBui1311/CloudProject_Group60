@@ -11,7 +11,7 @@
                 <span class="card-title text-center">Existing Files on Cloud</span>
             </div>
             <div class="d-flex">
-                <a href="#" class="btn btn-primary">New File</a>
+                <a href="/files/upload" class="btn btn-primary">New File</a>
             </div>
         </div>
     </div>
@@ -37,7 +37,7 @@
                         <tbody>
                             {% for file in files %}
                             <tr>
-                                <td>01</td>
+                                <td class="order-number"></td>
                                 <td>{{ file }}</td>
                                 <td>
                                     <a href="{{ url_for('download_file', file_name=file, access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id) }}" class="btn btn-primary btn-sm">
