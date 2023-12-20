@@ -152,19 +152,21 @@
     var alertElement = document.getElementById("alert-action-success");
     var messSuccess = "{{ mess }}";
     var messError = "{{ error }}";
+    var time = "{{ time }}"
     var mess;
 
     if(messSuccess.length !== 0 && messSuccess !== "None") 
     {
         mess = messSuccess;
-        showTextAlert();
+        ;
+        showTextAlert(mess + " (" +String(time)+"s)");
     } else if(messError.length !== 0 && messError !== "None"){
         mess = messError;
-        showTextAlert();
+        showTextAlert(mess + " (" +String(time)+"s)");
     }
 
-    function showTextAlert() {
-        alertElement.textContent = mess;
+    function showTextAlert(message = "") {
+        alertElement.textContent = message;
             alertElement.classList.add("show-alert");
             setTimeout(function() {
                 alertElement.classList.remove("show-alert");

@@ -32,14 +32,6 @@ def login():
     return render_template('login.html')
 
 
-@app.route('/files/abc', methods=['GET', 'POST'])
-def abc():
-    if 'access_key' in session:
-        access_key = session['access_key']
-        return f"<h1>{access_key}</h1>"
-    return "abc"
-
-
 @app.route('/logout')
 def logout():
     access_key = session.get('access_key')
@@ -60,6 +52,7 @@ def file_list():
     kms_key_id = session.get('kms_key_id')
     mess = request.args.get("mess")
     error = request.args.get("error")
+    time = request.args.get("time")
 
     # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
@@ -71,7 +64,7 @@ def file_list():
     return render_template('file_list.html', files=files,
                            access_key=access_key, secret_key=secret_key, 
                            kms_key_id=kms_key_id, s3_client=s3_client, 
-                           mess = mess, error = error)
+                           mess = mess, error = error, time = time)
 
 
 # Route cho thao tác upload tệp tin
@@ -104,7 +97,7 @@ def upload_file():
                     # tính thời gian bằng cách trừ tg đầu và tg kết
                     upload_time = end_time - start_time
                     # chuyển thời gian tính qua html
-                    return redirect(url_for('file_list',upload_time=upload_time ,mess = mess, error = error))
+                    return redirect(url_for('file_list', time=upload_time ,mess = mess, error = error))
                 else:
                     return "Lỗi khi upload file"
 
@@ -136,7 +129,7 @@ def delete_file(file_name):
     except Exception as e:
         error = e
         
-    return redirect(url_for('file_list', access_key=access_key, delete_time=delete_time,
+    return redirect(url_for('file_list', access_key=access_key, time=delete_time,
                                 secret_key=secret_key, kms_key_id=kms_key_id, 
                                 mess = mess, error=error))
 
@@ -164,7 +157,7 @@ def download_file(file_name):
     except Exception as e:
         error = "Tải về thất bại!"
 
-    return redirect(url_for('file_list',download_time=download_time, 
+    return redirect(url_for('file_list',time=download_time, 
                             access_key=access_key, secret_key=secret_key, kms_key_id=kms_key_id,
                             mess = mess, error = error))
     
@@ -176,6 +169,9 @@ def share_file(file_name):
     access_key = session.get('access_key')
     secret_key = session.get('secret_key')
     kms_key_id = session.get('kms_key_id')
+    mess = ""
+    error = ""
+    mytime = time.time()
 
     # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
@@ -186,9 +182,13 @@ def share_file(file_name):
     if shared_link:
         end_time = time.time()
         share_time = end_time - start_time
-        return render_template('share_file.html', shared_link=shared_link, share_time=share_time)
+        mytime = share_time
+        mess = "Tạo đường dẫn thành công !"
     else:
-        return "Lỗi khi tạo đường link chia sẻ"
+        error = "Tạo đường dẫn thất bại !"
+    
+    return render_template('share_file.html', shared_link=shared_link, share_time=share_time, 
+                               mess = mess, error = error, time = mytime)
 
 if __name__ == '__main__':
     app.run(debug=False)
