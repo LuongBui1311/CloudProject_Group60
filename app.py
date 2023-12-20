@@ -107,12 +107,10 @@ def upload_file():
                 # Lưu file tạm thời và upload lên S3
                 file_path = f"{file.filename}"
                 file.save(file_path)
-
                 if upload.upload_encrypted_file_to_s3_with_kms(file_path, BUCKETNAME, s3_client, kms_key_id):
                     return redirect(url_for('file_list'))
                 else:
                     return "Lỗi khi upload file"
-                    
 
         return "Không có file được chọn"
 
