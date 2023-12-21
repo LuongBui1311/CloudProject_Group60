@@ -6,6 +6,8 @@ import share
 import upload
 import time
 import load
+import uploadfile
+from flask import Flask, jsonify
 import create_client
 
 app = Flask(__name__, static_folder='static')
@@ -64,35 +66,67 @@ def file_list():
 
 
 # Route cho thao tác upload tệp tin
+
 @app.route('/files/upload', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         start_time = time.time()
-
         access_key = session.get('access_key')
         secret_key = session.get('secret_key')
-        kms_key_id = session.get('kms_key_id')
-        mess = "";
-        error = "";
-        s3_client = create_client.create_s3_client(access_key, secret_key)
-
+        mess = ""
+        error = ""
         if 'file' in request.files:
             file = request.files['file']
             if file.filename != '':
-                # Lưu file tạm thời và upload lên S3
-                file_path = f"{file.filename}"
-                file.save(file_path)
-                if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
+                message = uploadfile.upload_file_to_s3(file, access_key, secret_key, BUCKETNAME)
+                if message != "":
                     mess = "Upload thành công !"
                     end_time = time.time()
                     upload_time = end_time - start_time
                     return redirect(url_for('file_list', time=upload_time ,mess = mess, error = error))
                 else:
-                    return "Lỗi khi upload file"
-
+                    print('Upload error!!!')
+                    status = 'False'
+                    return jsonify({'status': status, 'message': 'Failed to upload file'})
         return "Không có file được chọn"
-
     return render_template('upload_file.html')
+
+# @app.route('/files/upload', methods=['GET', 'POST'])
+# def upload_file():
+#     if request.method == 'POST':
+#         # khởi tạo thời gian đầu
+#         start_time = time.time()
+
+#         # # Retrieve data from the session
+#         access_key = session.get('access_key')
+#         secret_key = session.get('secret_key')
+#         kms_key_id = session.get('kms_key_id')
+#         mess = ""
+#         error = ""
+#         # # Tạo client S3
+#         s3_client = create_client.create_s3_client(access_key, secret_key)
+#         #
+#         # # Upload file
+#         if 'file' in request.files:
+#             file = request.files['file']
+#             if file.filename != '':
+#                 # Lưu file tạm thời và upload lên S3
+#                 file_path = f"{file.filename}"
+#                 file.save(file_path)
+#                 if upload.upload_file_to_s3(file_path, BUCKETNAME, s3_client, kms_key_id):
+#                     mess = "Upload thành công !"
+#                     # Khởi tạo thời gian kết thúc
+#                     end_time = time.time()
+#                     # tính thời gian bằng cách trừ tg đầu và tg kết
+#                     upload_time = end_time - start_time
+#                     # chuyển thời gian tính qua html
+#                     return redirect(url_for('file_list', time=upload_time ,mess = mess, error = error))
+#                 else:
+#                     return "Lỗi khi upload file"
+
+#         return "Không có file được chọn"
+
+#     return render_template('upload_file.html')
 
 # Route cho thao tác xóa tệp tin
 @app.route('/delete/<file_name>')
@@ -102,14 +136,14 @@ def delete_file(file_name):
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
-    mess = "";
-    error = "";
-
+    mess = ""
+    error = ""
+    # Tạo client S3
     s3_client = create_client.create_s3_client(access_key, secret_key)
 
     try:
         if delete.delete_file_from_s3(file_name, BUCKETNAME, s3_client):
-            mess = "Xóa thành công!";
+            mess = "Xóa thành công!"
             end_time = time.time()
             delete_time = end_time - start_time
         else:
@@ -128,8 +162,8 @@ def download_file(file_name):
     access_key = request.args.get('access_key')
     secret_key = request.args.get('secret_key')
     kms_key_id = request.args.get('kms_key_id')
-    mess = "";
-    error = "";
+    mess = ""
+    error = ""
     try:
         s3_resource = create_client.create_s3_resource(access_key, secret_key)
         
